@@ -3,12 +3,20 @@ repo = 'Shougo/dein.vim'
 
 [[plugins]]
 repo = 'scrooloose/nerdtree' 
+hook_add = '''
+  nnoremap <silent><C-n> :NERDTreeToggle<CR>
+'''
 
 [[plugins]]
 repo = 'jacoborus/tender.vim'
 
 [[plugins]]
 repo = 'fatih/vim-go'
+hook_add = '''
+  let g:go_fmt_command = "goimports"
+  let g:go_def_mapping_enabled = 0
+  let g:go_doc_keywordprg_enabled = 0
+'''
 
 [[plugins]]
 repo = 'tpope/vim-fugitive'
@@ -21,10 +29,79 @@ repo = 'airblade/vim-gitgutter'
 
 [[plugins]]
 repo = 'Shougo/denite.nvim'
+hook_add = '''
+	let s:menus = {}
+  let s:menus.file = {'description': 'File search (buffer, file, file_rec, file_mru'}
+  let s:menus.line = {'description': 'Line search (change, grep, line, tag'}
+  let s:menus.others = {'description': 'Others (command, command_history, help)'}
+  let s:menus.file.command_candidates = [
+        \ ['buffer', 'Denite buffer'],
+        \ ['file: Files in the current directory', 'Denite file'],
+        \ ['file_rec: Files, recursive list under the current directory', 'Denite file_rec'],
+        \ ['file_mru: Most recently used files', 'Denite file_mru']
+        \ ]
+  let s:menus.line.command_candidates = [
+        \ ['change', 'Denite change'],
+        \ ['grep :grep', 'Denite grep'],
+        \ ['line', 'Denite line'],
+        \ ['tag', 'Denite tag']
+        \ ]
+  let s:menus.others.command_candidates = [
+        \ ['command', 'Denite command'],
+        \ ['command_history', 'Denite command_history'],
+        \ ['help', 'Denite help']
+        \ ]
+
+  call denite#custom#var('menu', 'menus', s:menus)
+  call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
+      \ [ '*~', '*.o', '*.exe', '*.bak',
+      \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
+      \ '.hg/', '.git/', '.bzr/', '.svn/',
+      \ 'node_modules/', 'bower_components/', 'tmp/', 'log/', 'vendor',
+      \ '.idea/', 'dist/',
+      \ 'tags', 'tags-*'])
+  call denite#custom#map('_', "<C-s>",
+    \ '<denite:do_action:vsplit>')
+  call denite#custom#map('insert', "<C-s>",
+    \ '<denite:do_action:vsplit>')
+  call denite#custom#map('_', "<C-v>",
+    \ '<denite:do_action:split>')
+  call denite#custom#map('insert', "<C-v>",
+    \ '<denite:do_action:split>')
+  call denite#custom#map('insert',
+    \ "jj", '<denite:enter_mode:normal>')
+  call denite#custom#var('file_rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+  call denite#custom#var('grep', 'command', ['ag'])
+  call denite#custom#var('grep', 'recursive_opts', [])
+  call denite#custom#var('grep', 'pattern_opt', [])
+  call denite#custom#var('grep', 'default_opts', ['--follow', '--no-group', '--no-color'])
+  call denite#custom#map('insert', "<C-j>", '<denite:move_to_next_line>')
+  call denite#custom#map('insert', "<C-k>", '<denite:move_to_previous_line>')
+
+  nnoremap [denite] <Nop>
+  nmap <space>d [denite]
+  nmap <silent> <C-g> ;<C-u>Denite grep<CR>
+  nmap <silent> <C-p> ;<C-u>Denite file_rec<CR>
+  nmap <silent> <space>g ;<C-u>DeniteCursorWord grep<CR>
+  nmap <silent> [denite]r ;<C-u>Denite file_mru<CR>
+  nmap <silent> [denite]y ;<C-u>Denite neoyank<CR>
+  nmap <silent> [denite]d ;<C-u>Denite directory_rec<CR>
+  nmap <silent> [denite]l ;<C-u>Denite directory_rec -default-action=cd<CR>
+  nmap <silent> [denite]c ;Denite change<CR>
+  nmap <silent> [denite]t ;Denite tag<CR>
+  nmap <silent> [denite]m ;Denite menu<CR>
+  nmap <silent> [denite]; ;Denite command<CR>
+  nmap <silent> [denite]h ;Denite command_history<CR>
+  nmap <silent> [denite]j ;Denite -resume<CR>
+'''
 
 [[plugins]]
 repo = 'Shougo/deoplete.nvim'
-hook_add = 'let g:deoplete#enable_at_startup = 1'
+on_event = 'InsertEnter'
+hook_add = '''
+  let g:deoplete#enable_at_startup = 1
+'''
 
 [[plugins]]
 repo = 'Shougo/neomru.vim'
@@ -34,6 +111,10 @@ repo = 'Shougo/neoyank.vim'
 
 [[plugins]]
 repo = 'Shougo/neosnippet.vim'
+hook_add = '''
+  imap <C-l> <Plug>(neosnippet_expand_or_jump)
+  smap <C-l> <Plug>(neosnippet_expand_or_jump)
+'''
 
 [[plugins]]
 repo = 'Shougo/neosnippet-snippets'
@@ -44,21 +125,45 @@ repo = 'othree/yajs.vim'
 [[plugins]]
 repo = 'prettier/vim-prettier'
 build = 'yarn install'
-on_ft = ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown'] 
+on_ft = ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'php'] 
 hook_add = '''
   let g:prettier#config#trailing_comma = 'none'
   let g:prettier#config#bracket_spacing = 'true'
   let g:prettier#autoformat = 0
-  autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.md PrettierAsync
+  autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.gql,*.md,*.vue,*.php PrettierAsync
 '''
 
 [[plugins]]
 repo = 'w0rp/ale'
 hook_add = '''
   let g:ale_fixers = {}
-  let g:ale_fixers['javascript'] = ['prettier']
-  let g:ale_fix_on_save = 0
+  let g:ale_fixers['php'] = ['php_cs_fixer']
+  let g:ale_fix_on_save = 1
 '''
 
 [[plugins]]
 repo = 'posva/vim-vue'
+
+[[plugins]]
+repo = 'leafgarland/typescript-vim'
+
+[[plugins]]
+repo = 'autozimu/LanguageClient-neovim'
+build = 'bash install.sh'
+rev = 'next'
+hook_add = '''
+  set hidden
+  let g:LanguageClient_serverCommands = {
+      \ 'vue': ['vls'],
+      \ 'rust': ['rls'],
+      \ 'go': ['golsp']
+      \ }
+  let g:LanguageClient_loadSettings = 1
+  nnoremap <space>m :call LanguageClient_contextMenu()<CR>
+  nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
+  nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+'''
+
+[[plugins]]
+repo = 'cespare/vim-toml'
+on_ft = 'toml'

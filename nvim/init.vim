@@ -16,13 +16,13 @@ if has('vim_starting') && dein#check_install()
   call dein#install()
 endif
 
-call denite#custom#map('insert', "<C-j>", '<denite:move_to_next_line>')
-call denite#custom#map('insert', "<C-k>", '<denite:move_to_previous_line>')
-
-
 " for nerdtree
 let NERDTreeStatusline="%{matchstr(getline('.'), '\\s\\zs\\w\\(.*\\)')}"
 let NERDTreeShowHidden=1
+
+" python setting
+let g:python3_host_prog = '/usr/local/bin/python3'
+let g:python_host_prog = '/usr/local/bin/python'
 
 " for git
 let g:ctrlp_user_command = ['.git', 'cd %s && git ls-files . -co --exclude-standard', 'find %s -type f']
@@ -34,8 +34,12 @@ let g:user_emmet_leader_key='<c-t>'
 autocmd QuickFixCmdPost *grep* cwindow
 
 " for vue
-autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript.css
+
+" autocmd BufRead,BufNewFile *.vue setlocal filetype=vue.html.javascript
 autocmd FileType vue syntax sync fromstart
+
+" nopaste
+autocmd InsertLeave * set nopaste
 
 " encoding
 set encoding=UTF-8
@@ -119,23 +123,16 @@ imap <C-p> <Up>
 imap <C-n> <Down>
 imap <C-b> <Left>
 imap <C-f> <Right>
-imap <C-l> <Plug>(neosnippet_expand_or_jump)
-smap <C-l> <Plug>(neosnippet_expand_or_jump)
 inoremap <silent> jj <ESC>
 inoremap { {}<Left>
 inoremap {<Enter> {}<Left><CR><ESC><S-o>
 inoremap ( ()<ESC>i
 inoremap (<Enter> ()<Left><CR><ESC><S-o>
 inoremap [ []<Left>
+inoremap [<Enter> [])<Left><CR><ESC><S-o>
 inoremap " ""<LEFT>
 inoremap ' ''<LEFT>
 inoremap ` ``<LEFT>
-nmap <silent> <C-g> ;<C-u>Denite grep<CR>
-nmap <silent> <space>r ;<C-u>Denite file_mru<CR>
-nmap <silent> <space>y ;<C-u>Denite neoyank<CR>
-nmap <silent> ;y ;<C-u>Denite neoyank<CR>
-nmap <silent> <C-p> ;<C-u>Denite file_rec<CR>
-nnoremap <silent><C-n> :NERDTreeToggle<CR>
 nnoremap j gj
 nnoremap k gk
 nnoremap ; :
@@ -144,33 +141,17 @@ nnoremap <space>c :<C-u>setlocal cursorline! cursorcolumn!<CR>
 noremap <Space>h ^
 noremap <Space>l $
 noremap <Space><CR> o<ESC>
+nmap <silent> <Space>i ;GoInfo<CR>
 inoremap <expr><C-j> pumvisible()?  "\<C-n>" : "\<C-j>"
 inoremap <expr><C-k> pumvisible()?  "\<C-p>" : "\<C-k>"
-
-" denite
-call denite#custom#map('_', "<C-s>",
-  \ '<denite:do_action:vsplit>')
-call denite#custom#map('insert', "<C-s>",
-  \ '<denite:do_action:vsplit>')
-call denite#custom#map('_', "<C-v>",
-  \ '<denite:do_action:split>')
-call denite#custom#map('insert', "<C-v>",
-  \ '<denite:do_action:split>')
-call denite#custom#map('insert',
-  \ "jj", '<denite:enter_mode:normal>')
-call denite#custom#var('file_rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
-call denite#custom#var('grep', 'command', ['ag'])
-call denite#custom#var('grep', 'recursive_opts', [])
-call denite#custom#var('grep', 'pattern_opt', [])
-call denite#custom#var('grep', 'default_opts', ['--follow', '--no-group', '--no-color'])
+nnoremap <silent>fd <C-w>v<C-w>w :call feedkeys("gd")<CR>
 
 " golang
-let g:go_metalinter_autosave = 1
-let g:go_fmt_command = "goimports"
-let g:go_highlight_fields = 1
-let g:go_highlight_types = 1
-let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
-let g:go_version_warning = 0
-let g:go_snippet_engine = "neosnippet"
+" let g:go_metalinter_autosave = 1
+" let g:go_highlight_fields = 1
+" let g:go_highlight_types = 1
+" let g:go_metalinter_enabled = ['vet', 'golint', 'errcheck']
+" let g:go_version_warning = 0
+" let g:go_snippet_engine = "neosnippet"
 au FileType go setlocal sw=4 ts=4 sts=4 noet
 
