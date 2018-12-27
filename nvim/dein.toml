@@ -24,16 +24,18 @@ repo = 'tpope/vim-fugitive'
 hook_add = '''
   nnoremap [fugitive]  <Nop>
   nmap <space>f [fugitive]
-  nnoremap <silent> [fugitive]s :Gstatus<CR><C-w>T
+  nnoremap <silent> [fugitive]s :Gstatus<CR>
   nnoremap <silent> [fugitive]c :Gcommit-v<CR>
   nnoremap <silent> [fugitive]d :Gvdiff<CR>
   nnoremap <silent> [fugitive]j :diffget //2<CR>
   nnoremap <silent> [fugitive]k :diffget //3<CR>
   nnoremap <silent> [fugitive]p :diffput<CR>
+  nnoremap <silent> [fugitive]a :Gwq<CR>
   vmap <space>f [fugitive]
   vnoremap <silent> [fugitive]p :diffput<CR>
-  command GStatusTabDiff tabedit %|Gdiff
-  autocmd FileType gitcommit noremap <buffer> dt :GStatusTabDiff<CR>
+  command GStatusTabDiff tabedit %|Gdiff<CR>
+  autocmd FileType fugitive noremap [fugitive]j :Gsplit<CR>:Gdiff<CR><C-w><C-l>
+  autocmd FileType fugitive map d D:wincmd l
 
 '''
 
@@ -153,9 +155,10 @@ repo = 'othree/yajs.vim'
 [[plugins]]
 repo = 'w0rp/ale'
 hook_add = '''
+  let g:ale_echo_msg_format = '[%linter%] %s'
   let g:ale_fixers = {
   \ 'php': ['php_cs_fixer'],
-  \ 'vue': ['prettier'],
+  \ 'vue': ['prettier', 'tidy'],
   \ 'typescript': ['prettier'],
   \ 'go': ['gofmt']
   \ }

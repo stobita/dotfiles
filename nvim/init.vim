@@ -67,6 +67,8 @@ set statusline+=%h
 set statusline+=%w
 " これ以降は右寄せ表示
 set statusline+=%=
+" file type
+set statusline+=[TYPE=%y]
 " file encoding
 set statusline+=[ENC=%{&fileencoding}]
 " 現在行数/全行数
