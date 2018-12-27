@@ -16,6 +16,7 @@ hook_add = '''
   let g:go_fmt_command = "goimports"
   let g:go_def_mapping_enabled = 0
   let g:go_doc_keywordprg_enabled = 0
+  let g:go_fmt_autosave = 0
 '''
 
 [[plugins]]
@@ -28,6 +29,12 @@ hook_add = '''
   nnoremap <silent> [fugitive]d :Gvdiff<CR>
   nnoremap <silent> [fugitive]j :diffget //2<CR>
   nnoremap <silent> [fugitive]k :diffget //3<CR>
+  nnoremap <silent> [fugitive]p :diffput<CR>
+  vmap <space>f [fugitive]
+  vnoremap <silent> [fugitive]p :diffput<CR>
+  command GStatusTabDiff tabedit %|Gdiff
+  autocmd FileType gitcommit noremap <buffer> dt :GStatusTabDiff<CR>
+
 '''
 
 [[plugins]]
@@ -149,7 +156,8 @@ hook_add = '''
   let g:ale_fixers = {
   \ 'php': ['php_cs_fixer'],
   \ 'vue': ['prettier'],
-  \ 'typescript': ['prettier']
+  \ 'typescript': ['prettier'],
+  \ 'go': ['gofmt']
   \ }
   let g:ale_linters = {
   \ 'html': [],

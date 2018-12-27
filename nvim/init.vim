@@ -120,6 +120,9 @@ hi Visual term=reverse cterm=reverse guibg=Grey
 hi User1 ctermbg=NONE ctermfg=darkcyan gui=BOLD
 hi SpecialKey ctermfg=Black guifg=Black
 
+hi TabLine ctermfg=Grey
+hi TabLineSel ctermfg=153
+
 " mapping
 imap <C-p> <Up>
 imap <C-n> <Down>
