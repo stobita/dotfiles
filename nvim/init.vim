@@ -72,6 +72,8 @@ set statusline+=[ENC=%{&fileencoding}]
 " 現在行数/全行数
 set statusline+=[ROW=%l/%L][COL=%c]
 " ステータスラインを常に表示(0:表示しない、1:2つ以上ウィンドウがある時だけ表示)
+set statusline+=%{FugitiveStatusline()}
+
 set laststatus=2
 set infercase
 "不可視文字
@@ -129,7 +131,7 @@ inoremap {<Enter> {}<Left><CR><ESC><S-o>
 inoremap ( ()<ESC>i
 inoremap (<Enter> ()<Left><CR><ESC><S-o>
 inoremap [ []<Left>
-inoremap [<Enter> [])<Left><CR><ESC><S-o>
+inoremap [<Enter> []<Left><CR><ESC><S-o>
 inoremap " ""<LEFT>
 inoremap ' ''<LEFT>
 inoremap ` ``<LEFT>
@@ -145,6 +147,46 @@ nmap <silent> <Space>i ;GoInfo<CR>
 inoremap <expr><C-j> pumvisible()?  "\<C-n>" : "\<C-j>"
 inoremap <expr><C-k> pumvisible()?  "\<C-p>" : "\<C-k>"
 nnoremap <silent>fd <C-w>v<C-w>w :call feedkeys("gd")<CR>
+
+" tab
+nmap t [Tag]
+map <silent> [Tag]o ;tablast <bar> tabnew<CR>
+map <silent> [Tag]x ;tabclose<CR>
+map <silent> [Tag]j ;tabnext<CR>
+map <silent> [Tag]k ;tabprevious<CR>
+
+" command line
+cnoremap <C-b> <Left>
+cnoremap <C-f> <Right>
+
+function! s:SID_PREFIX()
+  return matchstr(expand('<sfile>'), '<SNR>\d\+_\zeSID_PREFIX$')
+endfunction
+
+" Set tabline.
+function! s:my_tabline()  "{{{
+  let s = ''
+  for i in range(1, tabpagenr('$'))
+    let bufnrs = tabpagebuflist(i)
+    let bufnr = bufnrs[tabpagewinnr(i) - 1]  " first window, first appears
+    let no = i  " display 0-origin tabpagenr.
+    let mod = getbufvar(bufnr, '&modified') ? '!' : ' '
+    let title = fnamemodify(bufname(bufnr), ':t')
+    let title = '[' . title . ']'
+    let s .= '%'.i.'T'
+    let s .= '%#' . (i == tabpagenr() ? 'TabLineSel' : 'TabLine') . '#'
+    let s .= no . ':' . title
+    let s .= mod
+    let s .= '%#TabLineFill# '
+  endfor
+  let s .= '%#TabLineFill#%T%=%#TabLine#'
+  return s
+endfunction "}}}
+let &tabline = '%!'. s:SID_PREFIX() . 'my_tabline()'
+set showtabline=2 " 常にタブラインを表示
+for n in range(1, 9)
+  execute 'nnoremap <silent> [Tag]'.n  ':<C-u>tabnext'.n.'<CR>'
+endfor
 
 " golang
 " let g:go_metalinter_autosave = 1

@@ -20,6 +20,15 @@ hook_add = '''
 
 [[plugins]]
 repo = 'tpope/vim-fugitive'
+hook_add = '''
+  nnoremap [fugitive]  <Nop>
+  nmap <space>f [fugitive]
+  nnoremap <silent> [fugitive]s :Gstatus<CR><C-w>T
+  nnoremap <silent> [fugitive]c :Gcommit-v<CR>
+  nnoremap <silent> [fugitive]d :Gvdiff<CR>
+  nnoremap <silent> [fugitive]j :diffget //2<CR>
+  nnoremap <silent> [fugitive]k :diffget //3<CR>
+'''
 
 [[plugins]]
 repo = 'mattn/emmet-vim'
@@ -84,6 +93,7 @@ hook_add = '''
   nmap <silent> <C-g> ;<C-u>Denite grep<CR>
   nmap <silent> <C-p> ;<C-u>Denite file_rec<CR>
   nmap <silent> <space>g ;<C-u>DeniteCursorWord grep<CR>
+  nmap <silent> <space>b ;<C-u>Denite buffer<CR>
   nmap <silent> [denite]r ;<C-u>Denite file_mru<CR>
   nmap <silent> [denite]y ;<C-u>Denite neoyank<CR>
   nmap <silent> [denite]d ;<C-u>Denite directory_rec<CR>
@@ -122,23 +132,33 @@ repo = 'Shougo/neosnippet-snippets'
 [[plugins]]
 repo = 'othree/yajs.vim'
 
-[[plugins]]
-repo = 'prettier/vim-prettier'
-build = 'yarn install'
-on_ft = ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'php'] 
-hook_add = '''
-  let g:prettier#config#trailing_comma = 'none'
-  let g:prettier#config#bracket_spacing = 'true'
-  let g:prettier#autoformat = 0
-  autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.gql,*.md,*.vue,*.php PrettierAsync
-'''
+# [[plugins]]
+# repo = 'prettier/vim-prettier'
+# build = 'yarn install'
+# on_ft = ['javascript', 'typescript', 'css', 'less', 'scss', 'json', 'graphql', 'markdown', 'php'] 
+# hook_add = '''
+#   let g:prettier#config#trailing_comma = 'none'
+#   let g:prettier#config#bracket_spacing = 'true'
+#   let g:prettier#autoformat = 0
+#   autocmd BufWritePre *.js,*.jsx,*.mjs,*.ts,*.tsx,*.css,*.less,*.scss,*.json,*.graphql,*.gql,*.md,*.vue,*.php PrettierAsync
+# '''
 
 [[plugins]]
 repo = 'w0rp/ale'
 hook_add = '''
-  let g:ale_fixers = {}
-  let g:ale_fixers['php'] = ['php_cs_fixer']
+  let g:ale_fixers = {
+  \ 'php': ['php_cs_fixer'],
+  \ 'vue': ['prettier'],
+  \ 'typescript': ['prettier']
+  \ }
+  let g:ale_linters = {
+  \ 'html': [],
+  \ 'css': ['stylelint'],
+  \ 'javascript': ['eslint'],
+  \ 'typescript': ['tslint', 'tsserver'],
+  \ }
   let g:ale_fix_on_save = 1
+  let g:ale_javascript_prettier_use_local_config = 1
 '''
 
 [[plugins]]
@@ -156,9 +176,13 @@ hook_add = '''
   let g:LanguageClient_serverCommands = {
       \ 'vue': ['vls'],
       \ 'rust': ['rls'],
-      \ 'go': ['golsp']
+      \ 'go': ['golsp'],
+      \ 'javascript': ['javascript-typescript-stdio'],
+      \ 'typescript': ['javascript-typescript-stdio'],
+      \ 'php': ['~/dotfiles/composer/vendor/felixfbecker/language-server/bin/php-language-server.php']
       \ }
   let g:LanguageClient_loadSettings = 1
+  let g:LanguageClient_hoverPreview = "Never"
   nnoremap <space>m :call LanguageClient_contextMenu()<CR>
   nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
   nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
@@ -167,3 +191,16 @@ hook_add = '''
 [[plugins]]
 repo = 'cespare/vim-toml'
 on_ft = 'toml'
+
+[[plugins]]
+repo = "Shougo/deol.nvim"
+hook_add = '''
+  nmap <silent> <Space>t ;Deol -split<CR>
+	tnoremap <silent> jj  <C-\><C-n>
+'''
+
+[[plugins]]
+repo = "zchee/deoplete-zsh"
+
+[[plugins]]
+repo = 'jwalton512/vim-blade'

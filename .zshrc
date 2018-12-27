@@ -5,6 +5,7 @@ export LANG=ja_JP.UTF-8
 export EDITORP=vim
 export XDG_CONFIG_HOME=$HOME/dotfiles
 bindkey -e
+# bindkey "jj" vi-cmd-mode
 
 autoload -Uz compinit
 compinit
@@ -38,10 +39,10 @@ setopt prompt_subst
 zstyle ':vcs_info:git:*' check-for-changes true
 zstyle ':vcs_info:git:*' stagedstr "%F{magenta}!"
 zstyle ':vcs_info:git:*' unstagedstr "%F{yellow}+"
-zstyle ':vcs_info:*' formats "%F{cyan}%c%u[%b]%f"
+zstyle ':vcs_info:*' formats "%F{blue}%c%u[%b]%f"
 zstyle ':vcs_info:*' actionformats '[%b|%a]'
 precmd() { vcs_info }
-PROMPT='%F{cyan}%~%f %F{cyan}>%f '
+PROMPT='%F{blue}%~%f %F{blue}>%f '
 RPROMPT='${vcs_info_msg_0_}'
 
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
@@ -57,6 +58,7 @@ setopt hist_expand
 alias vi='vim'
 alias la='ls -la'
 alias co='checkout'
+alias vim=nvim
 
 function peco-select-history() {
     local tac
