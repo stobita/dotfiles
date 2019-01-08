@@ -55,18 +55,10 @@ set smartindent
 " Tab文字を半角スペースにする
 set expandtab
 set tabstop=2
-" ファイル名表示
-set statusline=%F
-" 変更チェック表示
-set statusline+=%1*\ %m\ %*
-" 読み込み専用かどうか表示
-set statusline+=%r
 " ヘルプページなら[HELP]と表示
-set statusline+=%h
+set statusline=%h
 " プレビューウインドウなら[Prevew]と表示
 set statusline+=%w
-" これ以降は右寄せ表示
-set statusline+=%=
 " file type
 set statusline+=[TYPE=%y]
 " file encoding
@@ -75,6 +67,14 @@ set statusline+=[ENC=%{&fileencoding}]
 set statusline+=[ROW=%l/%L][COL=%c]
 " ステータスラインを常に表示(0:表示しない、1:2つ以上ウィンドウがある時だけ表示)
 set statusline+=%{FugitiveStatusline()}
+" これ以降は右寄せ表示
+set statusline+=%=
+" ファイル名表示
+set statusline+=%F
+" 変更チェック表示
+set statusline+=%1*\ %m\ %*
+" 読み込み専用かどうか表示
+set statusline+=%r
 
 set laststatus=2
 set infercase

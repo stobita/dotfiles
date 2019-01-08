@@ -101,7 +101,6 @@ hook_add = '''
   command GStatusTabDiff tabedit %|Gdiff<CR>
   autocmd FileType fugitive noremap [fugitive]j :Gsplit<CR>:Gdiff<CR><C-w><C-l>
   autocmd FileType fugitive map <silent>fj D:wincmd l
-
 '''
 
 [[plugins]]
