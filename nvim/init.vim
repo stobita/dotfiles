@@ -142,6 +142,8 @@ inoremap ' ''<LEFT>
 inoremap ` ``<LEFT>
 nnoremap j gj
 nnoremap k gk
+nnoremap gj j
+nnoremap gk k
 nnoremap ; :
 nnoremap : ;
 nnoremap <space>c :<C-u>setlocal cursorline! cursorcolumn!<CR>
