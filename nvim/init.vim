@@ -127,6 +127,11 @@ hi SpecialKey ctermfg=Black guifg=Black
 hi TabLine ctermfg=Grey
 hi TabLineSel ctermfg=153
 
+hi Pmenu ctermbg=236 ctermfg=White
+hi PmenuSel ctermbg=Black ctermfg=153
+hi PmenuSbar ctermbg=236
+hi PmenuThumb ctermbg=Black
+
 " mapping
 imap <C-p> <Up>
 imap <C-n> <Down>
