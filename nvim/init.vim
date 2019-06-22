@@ -115,8 +115,8 @@ hi link EndOfBuffer Ignore
 hi NonText ctermfg=Black guifg=Black
 hi LineNr ctermfg=grey
 hi VertSplit cterm=NONE ctermfg=Black
-hi StatusLine cterm=none ctermfg=white ctermbg=Black cterm=NONE
-hi StatusLineNC ctermbg=Black ctermfg=Grey cterm=NONE
+hi StatusLine cterm=none ctermfg=white ctermbg=234 cterm=NONE
+hi StatusLineNC ctermbg=234 ctermfg=Grey cterm=NONE
 hi TabLine ctermbg=Black ctermfg=Black
 hi TabLineSel ctermbg=Black ctermfg=Black
 hi TabLineFill ctermbg=Black ctermfg=Black
@@ -156,6 +156,7 @@ nnoremap : ;
 nnoremap <space>c :<C-u>setlocal cursorline! cursorcolumn!<CR>
 noremap <Space>h ^
 noremap <Space>l $
+noremap <Space>q @q
 noremap <Space><CR> o<ESC>
 nmap <silent> <Space>i ;GoInfo<CR>
 inoremap <expr><C-j> pumvisible()?  "\<C-n>" : "\<C-j>"
@@ -210,4 +211,5 @@ endfor
 " let g:go_version_warning = 0
 " let g:go_snippet_engine = "neosnippet"
 au FileType go setlocal sw=4 ts=4 sts=4 noet
-
+au FileType blade setlocal sw=4 ts=4 sts=4
+au FileType php setlocal sw=4 ts=4 sts=4

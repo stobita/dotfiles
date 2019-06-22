@@ -110,16 +110,17 @@ repo = 'mattn/emmet-vim'
 repo = 'airblade/vim-gitgutter'
 
 [[plugins]]
+[[plugins]]
 repo = 'Shougo/denite.nvim'
 hook_add = '''
 	let s:menus = {}
-  let s:menus.file = {'description': 'File search (buffer, file, file_rec, file_mru'}
+  let s:menus.file = {'description': 'File search (buffer, file, file/rec, file_mru'}
   let s:menus.line = {'description': 'Line search (change, grep, line, tag'}
   let s:menus.others = {'description': 'Others (command, command_history, help)'}
   let s:menus.file.command_candidates = [
         \ ['buffer', 'Denite buffer'],
         \ ['file: Files in the current directory', 'Denite file'],
-        \ ['file_rec: Files, recursive list under the current directory', 'Denite file_rec'],
+        \ ['file/rec: Files, recursive list under the current directory', 'Denite file/rec'],
         \ ['file_mru: Most recently used files', 'Denite file_mru']
         \ ]
   let s:menus.line.command_candidates = [
@@ -135,7 +136,7 @@ hook_add = '''
         \ ]
 
   call denite#custom#var('menu', 'menus', s:menus)
-  call denite#custom#source('file_rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
+  call denite#custom#source('file/rec', 'matchers', ['matcher_fuzzy', 'matcher_ignore_globs'])
   call denite#custom#filter('matcher_ignore_globs', 'ignore_globs',
       \ [ '*~', '*.o', '*.exe', '*.bak',
       \ '.DS_Store', '*.pyc', '*.sw[po]', '*.class',
@@ -153,7 +154,9 @@ hook_add = '''
     \ '<denite:do_action:split>')
   call denite#custom#map('insert',
     \ "jj", '<denite:enter_mode:normal>')
-  call denite#custom#var('file_rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
+  call denite#custom#map('normal', 'r',
+      \ '<denite:do_action:quickfix>', 'noremap')
+  call denite#custom#var('file/rec', 'command', ['ag', '--follow', '--nocolor', '--nogroup', '-g', ''])
   call denite#custom#var('grep', 'command', ['ag'])
   call denite#custom#var('grep', 'recursive_opts', [])
   call denite#custom#var('grep', 'pattern_opt', [])
@@ -164,7 +167,7 @@ hook_add = '''
   nnoremap [denite] <Nop>
   nmap <space>d [denite]
   nmap <silent> <C-g> ;<C-u>Denite grep<CR>
-  nmap <silent> <C-p> ;<C-u>Denite file_rec<CR>
+  nmap <silent> <C-p> ;<C-u>Denite file/rec<CR>i
   nmap <silent> <space>g ;<C-u>DeniteCursorWord grep<CR>
   nmap <silent> <space>b ;<C-u>Denite buffer<CR>
   nmap <silent> [denite]r ;<C-u>Denite file_mru<CR>
@@ -175,8 +178,42 @@ hook_add = '''
   nmap <silent> [denite]t ;Denite tag<CR>
   nmap <silent> [denite]m ;Denite menu<CR>
   nmap <silent> [denite]; ;Denite command<CR>
-  nmap <silent> [denite]h ;Denite command_history<CR>
+  nmap <silent> [denite]h ;Denite command_history<CR>i
   nmap <silent> [denite]j ;Denite -resume<CR>
+
+  let s:denite_win_width_percent = 0.8
+  let s:denite_win_height_percent = 0.6
+
+  " Change denite default options
+  call denite#custom#option('default', {
+    \ 'split': 'floating',
+    \ 'winwidth': &columns * s:denite_win_width_percent,
+    \ 'wincol': (&columns - (&columns * s:denite_win_width_percent)) / 2,
+    \ 'winheight': &lines * s:denite_win_height_percent,
+    \ 'winrow': (&lines - (&lines * s:denite_win_height_percent)) / 2,
+    \ })
+
+  " new config
+  " Define mappings
+	autocmd FileType denite call s:denite_my_settings()
+	function! s:denite_my_settings() abort
+	  nnoremap <silent><buffer><expr> <CR>
+	  \ denite#do_map('do_action')
+	  nnoremap <silent><buffer><expr> s
+	  \ denite#do_map('do_action', 'vsplit')
+	  nnoremap <silent><buffer><expr> v
+	  \ denite#do_map('do_action', 'split')
+	  nnoremap <silent><buffer><expr> d
+	  \ denite#do_map('do_action', 'delete')
+	  nnoremap <silent><buffer><expr> p
+	  \ denite#do_map('do_action', 'preview')
+	  nnoremap <silent><buffer><expr> q
+	  \ denite#do_map('quit')
+	  nnoremap <silent><buffer><expr> i
+	  \ denite#do_map('open_filter_buffer')
+	  nnoremap <silent><buffer><expr> <Space>
+	  \ denite#do_map('toggle_select').'j'
+	endfunction
 '''
 
 [[plugins]]
@@ -223,8 +260,11 @@ hook_add = '''
   let g:ale_fixers = {
   \ 'php': ['php_cs_fixer'],
   \ 'blade': ['php_cs_fixer'],
-  \ 'vue': ['prettier', 'tidy'],
+  \ 'vue': ['prettier'],
+  \ 'json': ['prettier'],
   \ 'typescript': ['prettier'],
+  \ 'javascript.jsx': ['prettier'],
+  \ 'javascript': ['prettier'],
   \ 'go': ['gofmt', 'goimports']
   \ }
   let g:ale_linters = {
@@ -232,9 +272,14 @@ hook_add = '''
   \ 'css': ['stylelint'],
   \ 'javascript': ['eslint'],
   \ 'typescript': ['tslint', 'tsserver'],
+  \ 'go': ['golint', 'govet', 'gofmt', 'bingo'],
   \ }
   let g:ale_fix_on_save = 1
   let g:ale_javascript_prettier_use_local_config = 1
+  let g:ale_sign_error = '×'
+  let g:ale_sign_warning = '△'
+  let g:ale_echo_msg_error_str = 'E'
+  let g:ale_echo_msg_warning_str = 'W'
 '''
 
 [[plugins]]
@@ -248,11 +293,12 @@ repo = 'autozimu/LanguageClient-neovim'
 build = 'bash install.sh'
 rev = 'next'
 hook_add = '''
+  nnoremap [lsp] <Nop>
+  nmap <space>j [lsp]
   set hidden
   let g:LanguageClient_serverCommands = {
       \ 'vue': ['vls'],
-      \ 'rust': ['rls'],
-      \ 'go': ['gopls'],
+      \ 'go': ['bingo'],
       \ 'javascript': ['javascript-typescript-stdio'],
       \ 'javascript.jsx': ['javascript-typescript-stdio'],
       \ 'typescript': ['javascript-typescript-stdio'],
@@ -260,9 +306,18 @@ hook_add = '''
       \ }
   let g:LanguageClient_loadSettings = 1
   let g:LanguageClient_hoverPreview = "Never"
+  let g:LanguageClient_useVirtualText = 0
+  let g:LanguageClient_changeThrottle = 5
+  let g:LanguageClient_diagnosticsEnable = 0
+  " let g:LanguageClient_loggingFile = expand('~/.vim/LanguageClient.log')
+
   nnoremap <space>m :call LanguageClient_contextMenu()<CR>
   nnoremap <silent> K :call LanguageClient#textDocument_hover()<CR>
   nnoremap <silent> gd :call LanguageClient#textDocument_definition()<CR>
+  nnoremap <silent> [lsp]i :call LanguageClient#textDocument_implementation()<CR>
+  nnoremap <silent> [lsp]f :call LanguageClient#textDocument_references()<CR>
+  nnoremap <silent> [lsp]k :call LanguageClient#textDocument_typeDefinition()<CR>
+  nnoremap <silent> [lsp]s :call LanguageClient#textDocument_documentSymbol()<CR>
 '''
 
 # [[plugins]]
