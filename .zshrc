@@ -57,6 +57,9 @@ setopt hist_expand
 
 alias vi='vim'
 alias la='ls -la'
+alias ll='exa -abghHliS'
+alias lt='exa -lT'
+alias rgf='rg --files -g'
 alias co='checkout'
 alias vim=nvim
 
